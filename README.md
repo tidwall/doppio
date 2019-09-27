@@ -4,13 +4,14 @@
     width="242" height="200" border="0" alt="Doppio">
 </p>
 
-Doppio is a fast experimental LRU cache server on top of [Ristretto](https://github.com/dgraph-io/ristretto) and [Redcon](https://github.com/tidwall/redcon), with support for the Redis protocol.
+Doppio is a fast experimental LRU cache server on top of [ristretto](https://github.com/dgraph-io/ristretto), [redcon](https://github.com/tidwall/redcon), and [evio](https://github.com/tidwall/evio). With support for the Redis protocol.
 
 ## Features
 
 - Multithreaded read and write operations.
 - Simplified Redis protocol support. Most Redis clients will be able to use Doppio.
 - Auto eviction of older items when the server is at optional cache capacity.
+- Optional `--single-threaded` flag for single-threaded, event-loop networking mode.
 
 ## Getting Started
 
@@ -43,13 +44,31 @@ Use the `redis-cli` application provided by the [Redis](https://github.com/antir
 $ redis-cli -p 6380
 > SET hello world
 OK
+
 > GET hello
 "world"
+
 > DEL hello
 (integer) 1
+
 > GET hello
 (nil)
-"
+```
+
+### Options
+
+Choose LRU capacity using the `-c` flag.
+
+```sh
+$ ./doppio -c 1gb      # max capactiy of 1 GB
+$ ./doppio -c 16gb     # max capactiy of 16 GB
+$ ./doppio -c 500mb    # max capactiy of 500 MB
+```
+
+Run in single-threaded mode using the `--single-threaded` flag.
+
+```sh
+$ ./doppio --single-threaded
 ```
 
 ## Performance
@@ -72,6 +91,17 @@ GET: 10482180.00 requests per second
 $ redis-benchmark -p 6379 -q -t SET,GET -P 1024 -r 1000000000 -n 10000000
 SET: 1171646.31 requests per second
 GET: 1762114.50 requests per second
+```
+
+
+### Single-threaded mode
+
+Using the `--single-threaded` flag or `GOMAXPROCS=1`.
+
+```
+$ redis-benchmark -p 6380 -q -t SET,GET -P 1024 -r 1000000000 -n 10000000
+SET: 1721763.00 requests per second
+GET: 1942124.62 requests per second
 ```
 
 ## Contact

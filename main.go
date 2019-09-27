@@ -26,7 +26,7 @@ func main() {
 	flag.IntVar(&port, "p", 6380, "Server port")
 	flag.BoolVar(&single, "single-threaded", runtime.GOMAXPROCS(0) == 1,
 		"Run in Single-threaded mode")
-	flag.StringVar(&capflag, "s", "1gb",
+	flag.StringVar(&capflag, "c", "1gb",
 		"Cache capacity of the database, such as 4gb, 500mb, etc.")
 	flag.Parse()
 	x, err := humanize.ParseBytes(capflag)
